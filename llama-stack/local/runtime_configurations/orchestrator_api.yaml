@@ -1,0 +1,133 @@
+version: '2'
+image_name: remote-vllm
+apis:
+  - inference
+  - safety
+  - shields
+  - agents
+  - vector_io
+  - tool_runtime
+
+providers:
+  safety:
+  - provider_id: trustyai_fms
+    provider_type: remote::trustyai_fms
+    config:
+      orchestrator_url: ${env.TRUSTYAI_FMS_ORCHESTRATOR_URL}
+      shields:
+        hap:
+          type: content
+          confidence_threshold: 0.5
+          message_types: ["user", "system"]
+          detectors:
+              hap: 
+                detector_params: {}
+        pii:
+          type: content
+          confidence_threshold: 0.5
+          message_types: ["user", "system"]
+          detectors:
+              regex:
+                detector_params: 
+                  regex: ["email", "ssn", "credit-card", "^hello$", "\\b[A-Z]{1,2}[0-9]{6}\\(?[0-9A]\\)?\\b"]
+
+  agents:
+  - provider_id: meta-reference
+    provider_type: inline::meta-reference
+    config:
+      persistence_store:
+        type: sqlite
+        db_path: ${env.STORE_DIR}/agents_store.db
+      responses_store:
+        type: sqlite
+        db_path: ${env.STORE_DIR}/responses_store.db
+
+  inference:
+  - provider_id: granite
+    provider_type: remote::vllm
+    config:
+      url: ${env.GRANITE_URL}
+      max_tokens: 512
+      api_token: "abc123"
+      tls_verify: false
+  - provider_id: qwen
+    provider_type: remote::vllm
+    config:
+      url: ${env.QWEN_URL}
+      max_tokens: 512
+      api_token: "abc123"
+      tls_verify: false
+      timeout: 30
+  - provider_id: sentence-transformers
+    provider_type: inline::sentence-transformers
+    config: {}
+
+  vector_io:
+  - provider_id: milvus
+    provider_type: inline::milvus
+    config:
+      db_path: ${env.STORE_DIR}/milvus.db
+      kvstore:
+        type: sqlite
+        db_path: ${env.STORE_DIR}/milvus_kv.db
+
+  tool_runtime:
+  - provider_id: brave-search
+    provider_type: remote::brave-search
+    config:
+      api_key: ${env.BRAVE_SEARCH_API_KEY:}
+      max_results: 3
+  - provider_id: tavily-search
+    provider_type: remote::tavily-search
+    config:
+      api_key: ${env.TAVILY_SEARCH_API_KEY:}
+      max_results: 3
+  - provider_id: rag-runtime
+    provider_type: inline::rag-runtime
+    config: {}
+  - provider_id: model-context-protocol
+    provider_type: remote::model-context-protocol
+    config: {}
+
+metadata_store:
+  type: sqlite
+  db_path: ${env.STORE_DIR}/registry.db
+
+models:
+- metadata: {}
+  model_id: ${env.GRANITE_MODEL}
+  provider_id: granite
+  model_type: llm
+- metadata: {}
+  model_id: ${env.QWEN_MODEL}
+  provider_id: qwen
+  model_type: llm
+- metadata:
+    embedding_dimension: 384
+  model_id: all-MiniLM-L6-v2
+  provider_id: sentence-transformers
+  model_type: embedding
+
+server:
+  port: 8321
+  tls_certfile: null
+  tls_keyfile: null
+  
+external_providers_dir: llama-stack/local/providers.d
+
+shields:
+  - shield_id: hap
+    provider_id: trustyai_fms
+  - shield_id: pii
+    provider_id: trustyai_fms
+
+tool_groups:
+- toolgroup_id: builtin::websearch
+  provider_id: tavily-search
+- toolgroup_id: builtin::rag
+  provider_id: rag-runtime
+- toolgroup_id: mcp::openshift
+  provider_id: model-context-protocol
+  mcp_endpoint:
+    uri: "${env.REMOTE_OCP_MCP_URL}"
+

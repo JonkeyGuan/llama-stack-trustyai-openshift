@@ -1,0 +1,32 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  annotations:
+    openshift.io/display-name: granite-guardian
+    serving.kserve.io/deploymentMode: RawDeployment
+  name: granite-guardian
+  namespace: llm
+  labels:
+    networking.kserve.io/visibility: exposed
+    opendatahub.io/dashboard: 'true'
+spec:
+  predictor:
+    automountServiceAccountToken: false
+    maxReplicas: 1
+    minReplicas: 1
+    model:
+      env:
+        - name: HF_HUB_OFFLINE
+          value: '"1"'
+      modelFormat:
+        name: guardrails-detector-hf-runtime
+      name: ''
+      resources:
+        limits:
+          cpu: '2'
+          memory: 8Gi
+        requests:
+          cpu: '1'
+          memory: 4Gi
+      runtime: granite-guardian
+      storageUri: 'oci://quay.io/rhn-support-pzimek1/modelcars/granite-guardian-hap-38m:latest'

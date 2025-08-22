@@ -1,0 +1,104 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: llamastack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llamastack
+  template:
+    metadata:
+      labels:
+        app: llamastack
+      # uncomment if running otel-collector sidecar for trace collection
+      # see ../observability/README.md for how to run otel-collector
+      #annotations:
+      #  sidecar.opentelemetry.io/inject: llamastack-otelsidecar # <- be sure to add this annotation to the **template.metadata**
+    spec:
+      volumes:
+        - name: run-config-volume
+          configMap:
+            name: run-config
+            defaultMode: 420
+        - name: llama-persist
+          persistentVolumeClaim:
+            claimName: llama-persist
+        - name: cache
+          emptyDir: {}
+        - name: pythain
+          emptyDir: {}
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: llamastack
+          env:
+            # uncomment if running otel-collector sidecar for trace collection
+            #- name: TELEMETRY_SINKS
+            #  value: 'console, sqlite, otel_trace'
+            #- name: OTEL_TRACE_ENDPOINT
+            #  value: http://localhost:4318/v1/traces
+            - name: MAX_TOKENS
+              value: '512'
+            - name: VLLM_MAX_TOKENS
+              value: '512'
+            - name: GRANITE_URL
+              value: 'http://granite-predictor:8080/v1'
+            - name: GRANITE_MODEL
+              value: granite
+            - name: GRANITE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: stack-secret
+                  key: granite-token
+            - name: QWEN_URL
+              value: 'http://qwen-predictor:8080/v1'
+            - name: QWEN_MODEL
+              value: qwen
+            - name: QWEN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: stack-secret
+                  key: qwen-token
+            - name: TRUSTYAI_FMS_ORCHESTRATOR_URL
+              value: 'http://guardrails-orchestrator-service:8033'
+            - name: REMOTE_OCP_MCP_URL
+              value: 'http://ocp-mcp-server:8000/sse'
+            - name: STORE_DIR
+              value: /app-data
+            - name: VLLM_API_TOKEN
+              value: fake
+            - name: CUSTOM_TIKTOKEN_CACHE_DIR
+              value: /app-cache
+            - name: MILVUS_DB_PATH
+              value: /app-data/milvus.db
+            - name: LLAMA_STACK_LOGGING
+              value: all=debug
+          ports:
+            - containerPort: 8321
+              protocol: TCP
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: pythain
+              mountPath: /pythainlp-data
+            - name: run-config-volume
+              mountPath: /app-config
+            - name: llama-persist
+              mountPath: /app-data
+            - name: cache
+              mountPath: /.cache
+          terminationMessagePolicy: File
+          image: 'quay.io/jonkey/llama-stack-trustyai:1.2'
+          command: ["python", "-m", "llama_stack.distribution.server.server", "--config", "/app-config/config.yaml"]
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
