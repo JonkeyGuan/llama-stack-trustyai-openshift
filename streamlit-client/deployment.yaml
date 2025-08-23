@@ -31,7 +31,7 @@ spec:
         volumeMounts:
         - mountPath: /etc/tls/private
           name: proxy-tls
-      - image: quay.io/jonkey/streamlit_client:0.1
+      - image: quay.io/jonkey/streamlit_client:0.2
         imagePullPolicy: IfNotPresent
         name: streamlit-client
         ports:
@@ -47,6 +47,8 @@ spec:
               secretKeyRef:
                 name: tavily-search-key
                 key: tavily-search-api-key
+          - name: HOME
+            value: /tmp
       volumes:
       - name: proxy-tls
         secret:
