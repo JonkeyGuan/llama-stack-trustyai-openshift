@@ -74,6 +74,16 @@ spec:
               value: /app-data/milvus.db
             - name: LLAMA_STACK_LOGGING
               value: all=debug
+            - name: TAVILY_SEARCH_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stack-secret
+                  key: tavily-search-api-key
+            - name: WOLFRAM_ALPHA_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stack-secret
+                  key: wolfram-alpha-api-key
           ports:
             - containerPort: 8321
               protocol: TCP
