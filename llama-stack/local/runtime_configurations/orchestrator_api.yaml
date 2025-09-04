@@ -184,6 +184,10 @@ tool_groups:
   provider_id: model-context-protocol
   mcp_endpoint:
     uri: "${env.REMOTE_OCP_MCP_URL}"
+- toolgroup_id: mcp::slack
+  provider_id: model-context-protocol
+  mcp_endpoint:
+    uri: "${env.REMOTE_SLACK_MCP_URL}"
 
 vector_dbs: []
 datasets: []

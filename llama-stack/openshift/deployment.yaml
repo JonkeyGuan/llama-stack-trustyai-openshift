@@ -64,6 +64,8 @@ spec:
               value: 'http://guardrails-orchestrator-service:8033'
             - name: REMOTE_OCP_MCP_URL
               value: 'http://ocp-mcp-server:8000/sse'
+            - name: REMOTE_SLACK_MCP_URL
+              value: 'http://slack-mcp-server:80/sse'
             - name: STORE_DIR
               value: /app-data
             - name: VLLM_API_TOKEN

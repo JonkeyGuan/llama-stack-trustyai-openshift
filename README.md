@@ -11,6 +11,7 @@ export TRUSTYAI_FMS_ORCHESTRATOR_URL=<>
 export GRANITE_URL=<>
 export QWEN_URL=<>
 export REMOTE_OCP_MCP_URL=<>
+export REMOTE_SLACK_MCP_URL=<>
 export GRANITE_MODEL=granite
 export QWEN_MODEL=qwen
 export STORE_DIR=./.app-data
