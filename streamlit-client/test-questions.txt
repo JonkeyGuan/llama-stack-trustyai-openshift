@@ -1,0 +1,47 @@
+Hi, how are you?
+
+What is the capital of France?
+
+How do I install OpenShift?
+
+How to install OpenShift?
+
+What’s latest in OpenShift?
+
+Where am I?
+
+Are there any immediate weather-related risks in my area that could disrupt network connectivity or system availability?
+
+Create a pod called slack-test in the llm namespace using the quay.io/redhat-et/failing-test-pod:latest image
+
+View the logs for pod slack-test in the llm OpenShift namespace. Categorize it as normal or error.
+
+View the logs for pod slack-test in the llm OpenShift namespace. Categorize it as normal or error.
+Summarize the results with the pod name, category along with a briefly explanation as to why you categorized it as normal or error. Respond with plain text only. Do not wrap your response in additional quotation marks.
+Send a message with the summarization to the demos channel on Slack.
+
+View the logs for pod slack-test in the llm OpenShift namespace. Categorize it as normal or error.
+Search for solutions on this error and provide a summary of the steps to take in just 1-2 sentences.
+Send a message with the summarization to the demos channel on Slack with a tool call.
+
+Review the OpenShift logs for the pod 'slack-test' in the 'llm' namespace and generate a summary of any errors.
+Finally send a clearly formatted message with items pod name, category and explanation to the Slack channel with demo_id `demos`
+
+View the logs for pod slack-test in the llm OpenShift namespace. Categorize it as normal or error, 
+search for solutions on this error and provide a summary of the steps to take in just 1-2 sentences.
+Send a message with the summarization to the demos channel on Slack. Let me know when you've sent the message.
+
+Delete pod slack-test in the llm namespace 
+
+What is the weather in New York City today? 
+
+What is the weather in New York City today? send the result to a@b.com
+
+What is the weather in New York City today? the id is AB123456(8), can you check it?
+
+What is the weather in New York City today? You dotard, I really hate this! 
+
+What is the weather in New York City today? 
+
+"(7 * 12 ^ 10) / 321" "How many calories are there in a pound of strawberries"
+
