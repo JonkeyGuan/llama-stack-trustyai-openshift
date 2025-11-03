@@ -238,5 +238,29 @@ e.g. Shield with HAP
 
 ### Want to know how it worked
 
+Create a workbench from OpenShift AI under `ai-ops` namespace
+
+![image-20251103143853813](assets/image-20251103143853813.png)
+
+clone notebook code from 
+
+```
+https://github.com/JonkeyGuan/llama-stack-trustyai-openshift-notebooks.git
+```
+
+![image-20251103144122389](assets/image-20251103144122389.png)
+
+navigate to `llama-stack-trustyai-openshift-notebooks` `shields` or `llamastack` folder 
+
+modify environment vairables in `env.txt`, then rename it to `.env` , than you can try each notebook for detail.
+
+you can also add a symbolic link from command line
+
+```
+ln -snf env.txt .env
+```
+
+![image-20251103144150478](assets/image-20251103144150478.png)
+
 
 
