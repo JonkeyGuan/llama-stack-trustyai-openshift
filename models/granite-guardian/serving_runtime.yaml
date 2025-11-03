@@ -1,0 +1,49 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    opendatahub.io/accelerator-name: ''
+    opendatahub.io/apiProtocol: REST
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+    opendatahub.io/serving-runtime-scope: global
+    opendatahub.io/template-display-name: Hugging Face Detector ServingRuntime for KServe
+    opendatahub.io/template-name: guardrails-detector-huggingface-runtime
+    openshift.io/display-name: granite-guardian
+  name: granite-guardian
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: '8080'
+  containers:
+    - args:
+        - '--workers=1'
+        - '--host=0.0.0.0'
+        - '--port=8000'
+        - '--log-config=/common/log_conf.yaml'
+      command:
+        - uvicorn
+        - 'app:app'
+      env:
+        - name: MODEL_DIR
+          value: /mnt/models
+        - name: HF_HOME
+          value: /tmp/hf_home
+      image: 'registry.redhat.io/rhoai/odh-guardrails-detector-huggingface-runtime-rhel9@sha256:3edbe551369c0456a9bd4a54893a9e385bcfe978ec313ad1f75d22caac0f6bd4'
+      name: kserve-container
+      ports:
+        - containerPort: 8000
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+  multiModel: false
+  supportedModelFormats:
+    - autoSelect: true
+      name: guardrails-detector-hf-runtime
+  volumes:
+    - emptyDir:
+        medium: Memory
+        sizeLimit: 2Gi
+      name: shm

@@ -5,7 +5,6 @@ metadata:
     openshift.io/display-name: qwen
     serving.kserve.io/deploymentMode: RawDeployment
   name: qwen
-  namespace: llm
   labels:
     networking.kserve.io/visibility: exposed
     opendatahub.io/dashboard: 'true'
@@ -16,11 +15,9 @@ spec:
     minReplicas: 1
     model:
       args:
-        - '--max-model-len'
-        - '20000'
+        - '--max-model-len=20000'
         - '--enable-auto-tool-choice'
-        - '--tool-call-parser'
-        - hermes
+        - '--tool-call-parser=hermes'
       modelFormat:
         name: vLLM
       name: ''

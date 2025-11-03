@@ -61,7 +61,9 @@ spec:
                   name: stack-secret
                   key: qwen-token
             - name: TRUSTYAI_FMS_ORCHESTRATOR_URL
-              value: 'http://guardrails-orchestrator-service:8033'
+              value: 'https://guardrails-orchestrator-service:8032'
+            - name: FMS_VERIFY_SSL
+              value: 'false'
             - name: REMOTE_OCP_MCP_URL
               value: 'http://ocp-mcp-server:8000/sse'
             - name: REMOTE_SLACK_MCP_URL
